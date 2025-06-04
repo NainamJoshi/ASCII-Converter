@@ -53,6 +53,4 @@ int main()
             cout << "Invalid choice." << endl;
             break;
     }
-
-    return 0;
 }
