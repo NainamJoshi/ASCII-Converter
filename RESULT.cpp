@@ -1,14 +1,17 @@
+#include <iostream>
 #include <string>
 using namespace std;
-int encode(string str)
+
+void encode(string str)
 {
     for (int i = 0; i < str.length(); i++)
     {
         int temp = (int)str[i];
         cout << temp;
     }
-    getchar();
+    cout << endl;
 }
+
 void decode(string str)
 {
     int len = str.length();
@@ -23,27 +26,33 @@ void decode(string str)
             num = 0;
         }
     }
-    getchar();
+    cout << endl;
 }
+
 int main()
 {
     string str;
-    cout << "Enter a string you want to encode or decode : " << endl;
-    getline( cin , str );
     int val;
-    cout << "Press 1 if you want to encode \nPress 2 if want to decode" << endl;
-    cin>>val;
+
+    cout << "Enter a string you want to encode or decode: ";
+    getline(cin, str);
+
+    cout << "Press 1 to Encode\nPress 2 to Decode: ";
+    cin >> val;
+    cin.ignore(); // Clear the newline left in buffer
+
     switch (val)
     {
         case 1:
-            encode (str);
+            encode(str);
             break;
         case 2:
-            decode (str);
+            decode(str);
             break;
         default:
-            cout << "Enter valid string without extra spaces" ;
+            cout << "Invalid choice." << endl;
             break;
     }
-    getch();
+
+    return 0;
 }
