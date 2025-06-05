@@ -1,56 +1,76 @@
 #include <iostream>
+#include <fstream>
 #include <string>
 using namespace std;
 
-void encode(string str)
-{
-    for (int i = 0; i < str.length(); i++)
-    {
-        int temp = (int)str[i];
-        cout << temp;
+void encode(const string& str, const string& outFile) {
+    ofstream outfile(outFile);
+    if (!outfile) {
+        cerr << "Error: Cannot open output file '" << outFile << "'" << endl;
+        return;
     }
-    cout << endl;
+
+    for (char ch : str) {
+        outfile << (int)ch;
+    }
+    outfile << endl;
+    outfile.close();
+    cout << "Encoding complete. Output written to " << outFile << endl;
 }
 
-void decode(string str)
-{
-    int len = str.length();
+void decode(const string& str, const string& outFile) {
+    ofstream outfile(outFile);
+    if (!outfile) {
+        cerr << "Error: Cannot open output file '" << outFile << "'" << endl;
+        return;
+    }
+
     int num = 0;
-    for (int i = 0; i < len; i++) 
-    {
-        num = num * 10 + (str[i] - '0');
-        if (num >= 32 && num <= 122) 
-        {
-            char ch = (char)num;
-            cout << ch;
+    for (char ch : str) {
+        num = num * 10 + (ch - '0');
+        if (num >= 32 && num <= 122) {
+            outfile << (char)num;
             num = 0;
         }
     }
-    cout << endl;
+    outfile << endl;
+    outfile.close();
+    cout << "Decoding complete. Output written to " << outFile << endl;
 }
 
-int main()
-{
-    string str;
-    int val;
-
-    cout << "Enter a string you want to encode or decode: ";
-    getline(cin, str);
-
-    cout << "Press 1 to Encode\nPress 2 to Decode: ";
-    cin >> val;
-    cin.ignore(); // Clear the newline left in buffer
-
-    switch (val)
-    {
-        case 1:
-            encode(str);
-            break;
-        case 2:
-            decode(str);
-            break;
-        default:
-            cout << "Invalid choice." << endl;
-            break;
+int main(int argc, char* argv[]) {
+    if (argc != 5) {
+        cerr << "Usage: " << argv[0] << " <-e | -d> <input.txt> -f <output.txt>" << endl;
+        return 1;
     }
+
+    string option = argv[1];
+    string inputFile = argv[2];
+    string fileFlag = argv[3];
+    string outputFile = argv[4];
+
+    if (fileFlag != "-f") {
+        cerr << "Error: Missing -f flag for output file." << endl;
+        return 1;
+    }
+
+    ifstream infile(inputFile);
+    if (!infile) {
+        cerr << "Error: Cannot open input file '" << inputFile << "'" << endl;
+        return 1;
+    }
+
+    string content((istreambuf_iterator<char>(infile)), istreambuf_iterator<char>());
+    infile.close();
+
+    if (option == "-e") {
+        encode(content, outputFile);
+    } else if (option == "-d") {
+        decode(content, outputFile);
+    } else {
+        cerr << "Invalid option. Use -e to encode or -d to decode." << endl;
+        return 1;
+    }
+
+    return 0;
 }
